@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+  <title>Your Bootstrap Page</title>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      margin-top: 50px;
+    }
+
+    .table-hover tbody tr:hover {
+      background-color: #e9ecef;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .mb-3 {
+      animation: slideInDown 0.5s ease-in-out;
+    }
+
+    .editable {
+      cursor: pointer;
+    }
+
+    .editable:hover {
+      background-color: #e2e2e2;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-center mb-4">Homepage List</h2>
+
+      <form id="addForm">
+        <div class="form-row mb-3">
+          <div class="col">
+            <input type="text" class="form-control" placeholder="Name" id="newName" required>
+          </div>
+          <div class="col">
+            <input type="url" class="form-control" placeholder="URL" id="newURL" required>
+          </div>
+          <div class="col">
+            <input type="text" class="form-control" placeholder="Description" id="newDescription" required>
+          </div>
+          <div class="col">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newInstagram">
+              <label class="form-check-label" for="newInstagram">Instagram</label>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newYouTube">
+              <label class="form-check-label" for="newYouTube">YouTube</label>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="newTikTok">
+              <label class="form-check-label" for="newTikTok">TikTok</label>
+            </div>
+          </div>
+          <div class="col">
+            <button type="button" class="btn btn-primary" onclick="addEntry()">Add Entry</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search..." oninput="filterTable()">
+      </div>
+      <div class="mb-3">
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input" id="showInstagram" onclick="filterTable()">
+          <label class="form-check-label" for="showInstagram">Instagram</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input" id="showYouTube" onclick="filterTable()">
+          <label class="form-check-label" for="showYouTube">YouTube</label>
+        </div>
+      </div>
+
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>URL</th>
+            <th>Description</th>
+            <th>Instagram</th>
+            <th>YouTube</th>
+            <th>TikTok</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+  let data = [
+    { id: 1, name: 'Example 1', url: 'http://example.com', description: 'Lorem ipsum', instagram: true, youtube: false, tiktok: true },
+    { id: 2, name: 'Example 2', url: 'http://example2.com', description: 'Dolor sit amet', instagram: false, youtube: true, tiktok: false },
+  ];
+
+  function filterTable() {
+    let searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    let showInstagram = document.getElementById('showInstagram').checked;
+    let showYouTube = document.getElementById('showYouTube').checked;
+
+    let filteredData = data.filter(entry =>
+      entry.name.toLowerCase().includes(searchTerm) &&
+      (showInstagram ? entry.instagram : true) &&
+      (showYouTube ? entry.youtube : true)
+    );
+
+    renderTable(filteredData);
+  }
+  function addEntry() {
+    let newName = document.getElementById('newName').value;
+    let newURL = document.getElementById('newURL').value;
+    let newDescription = document.getElementById('newDescription').value;
+    let newInstagram = document.getElementById('newInstagram').checked;
+    let newYouTube = document.getElementById('newYouTube').checked;
+    let newTikTok = document.getElementById('newTikTok').checked;
+    let newEntry = {
+      id: data.length + 1,
+      name: newName,
+      url: newURL,
+      description: newDescription,
+      instagram: newInstagram,
+      youtube: newYouTube,
+      tiktok: newTikTok
+    };
+    data.push(newEntry);
+    renderTable(data);
+    document.getElementById('newName').value = '';
+    document.getElementById('newURL').value = '';
+    document.getElementById('newDescription').value = '';
+    document.getElementById('newInstagram').checked = false;
+    document.getElementById('newYouTube').checked = false;
+    document.getElementById('newTikTok').checked = false;
+  }
+
+  function renderTable(entries) {
+    let tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = '';
+
+    entries.forEach(entry => {
+      let row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="editable" onclick="editCell(${entry.id}, 'name')">${entry.name}</td>
+        <td class="editable" onclick="editCell(${entry.id}, 'url')">${entry.url}</td>
+        <td class="editable" onclick="editCell(${entry.id}, 'description')">${entry.description}</td>
+        <td>${entry.instagram ? 'Yes' : 'No'}</td>
+        <td>${entry.youtube ? 'Yes' : 'No'}</td>
+        <td>${entry.tiktok ? 'Yes' : 'No'}</td>
+        <td><a href="#?id=${entry.id}">Details</a></td>
+      `;
+      tableBody.appendChild(row);
+    });
+  }
+
+  function editCell(id, field) {
+    let cell = document.querySelector(`.editable[data-id="${id}"][data-field="${field}"]`);
+    let originalContent = cell.textContent;
+
+    cell.classList.add('editing');
+    cell.innerHTML = `<input type="text" class="form-control" value="${originalContent}">`;
+    cell.querySelector('input').focus();
+
+    cell.querySelector('input').addEventListener('blur', function () {
+      let newContent = cell.querySelector('input').value;
+      cell.classList.remove('editing');
+      cell.innerHTML = newContent;
+      updateData(id, field, newContent);
+    });
+  }
+
+  function updateData(id, field, value) {
+    let entryToUpdate = data.find(entry => entry.id === id);
+    if (entryToUpdate) {
+      entryToUpdate[field] = value;
+    }
+  }
+  renderTable(data);
+</script>
+</body>
+</html>
